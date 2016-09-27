@@ -57,6 +57,7 @@ void pv_parseConfigLine(char *linea)
 /* Tenemos una linea del archivo de configuracion.
  * Si es comentario ( comienza con #) la eliminamos
  * Si el primer caracter es CR, LF, " " la eliminamos.
+ * Las lineas deben terminar con ;
 */
 	char *index;
 	int largo;
@@ -312,6 +313,8 @@ void pv_bdMySqlStmtInit(void)
 
 }
 //--------------------------------------------------------------------------
+// GENERAL
+//--------------------------------------------------------------------------
 void F_syslog(void)
 {
 /* Loguea por medio del syslog la linea de texto con el formato pasado
@@ -353,5 +356,31 @@ void F_syslog(void)
 
 }
 //--------------------------------------------------------------------------
+void daemonize( void)
+{
+	int i;
+	pid_t pid;
+
+	if ( ( pid = fork()) != 0)
+		exit (0);					/* El parent termina */
+
+	/* Continua el primer child  que se debe volver lider de sesion y no tener terminal */
+	setsid();
+
+	signal(SIGHUP, SIG_IGN);
+
+	if ( (pid = fork()) != 0)
+		exit(0);					/* El primer child termina. Garantiza que el demonio no pueda
+									 * adquirir una terminal
+									*/
+	/* Continua el segundo child */
+	chdir("/");
+	umask(0);
+
+	for(i=0; i< MAXFD; i++)	/* Cerramos todos los descriptores de archivo que pueda haber heredado */
+		close(i);
+
+}
+/*--------------------------------------------------------------------------*/
 
 

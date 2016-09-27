@@ -35,16 +35,19 @@
 #include <mysql.h>
 
 //--------------------------------------------------------------------------
-#define LOGBUFFERLENGHT	128
+#define LOGBUFFERLENGHT	1024
 #define MAXLENPARAMETERS 64
-#define SERIALLINESLENGH 128
-#define MAXLINE 2560
+#define SERIALLINESLENGH 256
+#define MAXLINE 256
+#define MAXFD 64
+#define MAXSQLCMDSTRING	 512
 
 #define VERSION (const char *)("Version 1.0.0 @ Spymovil,2016-09-26")
 
 //--------------------------------------------------------------------------
 char logBuffer[LOGBUFFERLENGHT];
 char serialRdLine[SERIALLINESLENGH];
+char mysqlCmd[MAXSQLCMDSTRING];
 
 int spFd;	// descriptor del puerto serial
 
@@ -66,5 +69,6 @@ void F_syslog(void);
 void u_readConfigFile(void);
 void u_initSerialPort(void);
 void u_initBD(void);
+void daemonize( void);
 
 #endif /* DLGCEMENTOSARTIGAS_H_ */
